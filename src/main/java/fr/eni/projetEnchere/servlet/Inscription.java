@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import fr.eni.projetEnchere.bll.UtilisateurManager;
+import fr.eni.projetEnchere.bo.Utilisateur;
 import fr.eni.projetEnchere.erreur.BusinessException;
 
 /**
@@ -34,29 +35,26 @@ public class Inscription extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pseudo = request.getParameter("pseudo");
-		//System.out.println(pseudo);
 		String nom = request.getParameter("nom");
-		//System.out.println(nom);
 		String prenom = request.getParameter("prenom");
-		//System.out.println(prenom);
 		String mail = request.getParameter("mail");
-		//System.out.println(mail);
 		String pass = request.getParameter("pass");
-		//System.out.println(pass);
 		String confirmationPass = request.getParameter("confirmation");
 		String ville = request.getParameter("ville");
 		String codePostal = request.getParameter("codePostal");
 		String telephone = request.getParameter("telephone");
 		String rue = request.getParameter("rue");
 		UtilisateurManager userManager = new UtilisateurManager();
+		Utilisateur user = new Utilisateur();
 		try {
-			int retour = userManager.ajouterUtilisateur(pseudo, nom, prenom, mail, rue, codePostal, ville, pass, confirmationPass);
+			user = userManager.ajouterUtilisateur(pseudo, nom, prenom, mail, rue, codePostal, ville, pass, confirmationPass);
+			request.setAttribute("user", user);
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			request.setAttribute("listeCodeErreur", e.getListeCodesErreur());
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/JSP/inscription.jsp");
+			rd.forward(request, response);
 		}
 		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/JSP/Acceuil.jsp");
 		rd.forward(request, response);
 	}
-
 }

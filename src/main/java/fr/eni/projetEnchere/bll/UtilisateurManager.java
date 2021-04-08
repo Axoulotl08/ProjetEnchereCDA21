@@ -1,7 +1,5 @@
 package fr.eni.projetEnchere.bll;
 
-import java.util.List;
-
 import fr.eni.projetEnchere.bo.Utilisateur;
 import fr.eni.projetEnchere.dal.DAOFactory;
 import fr.eni.projetEnchere.dal.EnchereDAO;
@@ -20,22 +18,24 @@ public class UtilisateurManager {
 		this.enchereDAO = DAOFactory.getEnchereDAO();
 	}
 	
-	public int ajouterUtilisateur(String pseudo, String nom, String prenom, String email, String rue, 
+	public Utilisateur ajouterUtilisateur(String pseudo, String nom, String prenom, String email, String rue, 
 			String codePoste, String ville, String motDePasse, String confirmationPass) throws BusinessException{
 		// Vérification des champs à faire
 		BusinessException erreur = new BusinessException();
-		boolean verifCodePoste = verifCodePostal(Integer.parseInt(codePoste));
-		if(verifCodePoste && verifMdpEtConfirmation(motDePasse, confirmationPass)) {
-			Utilisateur utilisateur = new Utilisateur(pseudo, nom, prenom, email, rue, codePoste, ville, motDePasse);
+		Utilisateur utilisateur = new Utilisateur(pseudo, nom, prenom, email, rue, codePoste, ville, motDePasse);
+		verifCodePostal(codePoste, erreur);
+		verifMdpEtConfirmation(motDePasse, confirmationPass, erreur);
+		verifPseudo(pseudo, erreur);
+		verifMail(email, erreur);
+		if(!erreur.hasErreurs()) {
 			System.out.println("UserManager !!");
 			enchereDAO.insertionUtilisateur(utilisateur);
-			return 1;
 		}
 		else {
 			System.out.println("Erreur code postale ou mdp");
-			return -1;
+			throw erreur;
 		}
-		
+		return utilisateur;
 	}
 	
 	/**
@@ -43,38 +43,61 @@ public class UtilisateurManager {
 	 * @param pseudo
 	 * @return le pseudo lié au mots de passe si existant, sinon retourne null
 	 */
-	private String selectionMotDePasse (String pseudo) {
+	public String selectionMotDePasse (String pseudo) {
 		String mdp = null;
 		mdp = enchereDAO.recuperationMotDePasse(pseudo);
 		return mdp;
 	}
 	
-	private boolean verifCodePostal(int codePostale) {
-		if(codePostale > 1000 && codePostale < 99999) {
-			return true;
+	/**
+	 * Vérifie que le code postal est bien un nombre compris entre 01000 et 99999
+	 * @param codePostale
+	 * @param erreur
+	 */
+	private void verifCodePostal(String codePostale, BusinessException erreur) {
+		try {
+			int codePostal = Integer.parseInt(codePostale);
+			if(codePostal < 1000 || codePostal > 99999) {
+				erreur.ajouterErreur(CodeErreurBLL.ERREUR_CODE_POSTAL);
+			}
 		}
-		else 
-			return false;
-	}
-	
-	private boolean verifMdpEtConfirmation(String mdp, String confirmation) {
-		return mdp.equals(confirmation);
-	}
-	
-	
-	private void verifPseudo(String pseudo, List<String> listePseudo, BusinessException exception) {
-		for(String pseudoEnCours:listePseudo) {
-			if(pseudo.equals(pseudoEnCours))
-				exception.ajouterErreur(CodeErreurBLL.ERREUR_PSEUDO);
-				break;
+		catch(NumberFormatException n) {
+			erreur.ajouterErreur(CodeErreurBLL.ERREUR_FORMAT_CP);
 		}
 	}
 	
-	private void verifMail(String mail, List<String> listeMail, BusinessException exception) {
-		for(String mailEnCours:listeMail) {
-			if(mail.equals(mail))
-				exception.ajouterErreur(CodeErreurBLL.ERREUR_EMAIL);
-				break;
+	/**
+	 * Vérifie que le mdp et ça confirmation sont identique
+	 * @param mdp
+	 * @param confirmation
+	 * @param exception : génère une exception à afficher à l'utilisateur en cas d'erreur de mots de passe
+	 */
+	private void verifMdpEtConfirmation(String mdp, String confirmation, BusinessException exception) {
+		if(!mdp.equals(confirmation)) {
+			exception.ajouterErreur(CodeErreurBLL.ERREUR_CONFIRMATION_MOT_DE_PASSE);
+		}
+	}
+	/**
+	 * Vérifie que le pseudo est libre
+	 * @param pseudo que l'utilisateur veux utilisé
+	 * @param exception généère une exception si le pseudo est utilisé
+	 */
+	private void verifPseudo(String pseudo, BusinessException exception) {
+		int id = enchereDAO.recuperationPseudo(pseudo);
+		if(id != -1) {
+			exception.ajouterErreur(CodeErreurBLL.ERREUR_PSEUDO);
+		}
+	}
+	
+	/**
+	 * Vérifie que le mail est libre
+	 * @param mail
+	 * @param exception génère une exception si le mail est utilisé
+	 */
+	private void verifMail(String mail, BusinessException exception) {
+		int id = enchereDAO.recuperationMail(mail);
+		if(id != -1) {
+			exception.ajouterErreur(CodeErreurBLL.ERREUR_EMAIL_DEJA_UTILISER);
 		}
 	}
 	

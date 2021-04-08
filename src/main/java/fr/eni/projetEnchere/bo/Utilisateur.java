@@ -20,6 +20,10 @@ public class Utilisateur {
 	private List<ArticleVendu> achatUtilisateur = new ArrayList<>();
 	private List<Enchere> listEnchere = new ArrayList<>();
 	
+	public Utilisateur() {
+		super();
+	}
+	
 	/**
 	 * Constructeur avec les champs requis pour l'inscrption
 	 * @param pseudo

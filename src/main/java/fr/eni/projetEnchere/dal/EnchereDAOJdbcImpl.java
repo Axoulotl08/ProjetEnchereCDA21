@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import fr.eni.projetEnchere.bo.Utilisateur;
 /**
@@ -14,11 +12,11 @@ import fr.eni.projetEnchere.bo.Utilisateur;
  *
  */
 public class EnchereDAOJdbcImpl implements EnchereDAO {
-	public static String INSERT_USER = "INSERT INTO UTILISATEURS (pseudo, nom, prenom, email, rue, code_postal, ville, mot_de_passe,"
+	private static String INSERT_USER = "INSERT INTO UTILISATEURS (pseudo, nom, prenom, email, rue, code_postal, ville, mot_de_passe,"
 			+ " credit, administrateur) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0)";
-	public static String SELECT_MDP = "SELECT mot_de_passe FROM UTILISATEURS WHERE pseudo = ?";
-	public static String SELECT_PSEUDO = "SELECT pseudo FROM UTILISATEURS";
-	public static String SELECT_MAIL = "SELECT email FROM UTILISATEURS";
+	private static String SELECT_MDP = "SELECT mot_de_passe FROM UTILISATEURS WHERE pseudo = ?";
+	private static String SELECT_PSEUDO = "SELECT no_utilisateur FROM UTILISATEURS WHERE pseudo = ?";
+	private static String SELECT_MAIL = "SELECT no_utilisateur FROM UTILISATEURS WHERE email = ?";
 	
 	/**
 	 * Insertion d'un utilisateur
@@ -80,37 +78,19 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 		return mdp;
 	}
 
-	@Override
-	public List<String> recuperationMail() {
-		List<String> listeMail = new ArrayList<>();
-		try(Connection cnx = ConnectionProvider.getConnection()){
-			cnx.setAutoCommit(false);
-			PreparedStatement stmt = cnx.prepareStatement(SELECT_MAIL);
-			ResultSet rs = stmt.executeQuery();
-			while(rs.next()) {
-				listeMail.add(rs.getString(1));				
-			}
-			cnx.commit();
-			cnx.close();
-			stmt.close();
-			rs.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("Erreur Récupération liste mail");
-		}
-		return listeMail;
-	}
+	
 
 	@Override
-	public List<String> recuperationPseudo() {
-		List<String> listePseudo = new ArrayList<>();
+	public int recuperationPseudo(String pseudo) {
+		String temp = null;
+		int id = 0;
 		try(Connection cnx = ConnectionProvider.getConnection()){
 			cnx.setAutoCommit(false);
 			PreparedStatement stmt = cnx.prepareStatement(SELECT_PSEUDO);
+			stmt.setString(1, pseudo);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
-				listePseudo.add(rs.getString(1));				
+				temp = rs.getString(1);				
 			}
 			cnx.commit();
 			cnx.close();
@@ -119,9 +99,39 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("Erreur Récupération liste pseudo");
+			System.out.println("Erreur Récupération MDP");
 		}
-		return listePseudo;
+		if(temp != null)
+			return Integer.parseInt(temp);
+		else 
+			return -1;
+	}
+
+	@Override
+	public int recuperationMail(String mail) {
+		String temp = null;
+		int id = 0;
+		try(Connection cnx = ConnectionProvider.getConnection()){
+			cnx.setAutoCommit(false);
+			PreparedStatement stmt = cnx.prepareStatement(SELECT_MAIL);
+			stmt.setString(1, mail);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				temp = rs.getString(1);				
+			}
+			cnx.commit();
+			cnx.close();
+			stmt.close();
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Erreur Récupération MDP");
+		}
+		if(temp != null)
+			return Integer.parseInt(temp);
+		else 
+			return -1;
 	}
 
 }

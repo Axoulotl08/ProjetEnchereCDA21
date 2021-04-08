@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@page import="java.util.List"%>
+<%@page import="fr.eni.projetEnchere.erreur.LecteurMessage"%>
+<%@page import="fr.eni.projetEnchere.bo.Utilisateur"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,22 +20,43 @@
             </div>
 	        <div class="row justify-content-center">
                 <div class="col-2">
-                    <h3>Mon profil</h3>
+                    <h3>Inscription</h3>
                 </div>	            
             </div>
             <form action="<%=request.getContextPath()%>/Inscription" method="post">
+            <%
+            	Utilisateur user = (Utilisateur) request.getAttribute("user");
+            %>
+            <%
+            	List<Integer> listErreurs = (List<Integer>)request.getAttribute("listeCodeErreur");
+            	if(listErreurs != null){
+            %>
+            <div class="row justify-content-center">
+            	<div class="col-md-12">
+            		<%
+            			for(int codeErreur:listErreurs){
+            		%>
+					<h2 class="color:red"><%=LecteurMessage.getMessageErreur(codeErreur) %></h2>
+					<%
+            			}
+					%>
+            	</div>
+            </div>
+            <%
+            	}
+            %>
             <div class="row">
                 <div class="col-md-3">
                     <label for="pseudo">Pseudo :</label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="pseudo">
+                    <input type="text" name="pseudo" value="<%=listErreurs!=null?request.getParameter("pseudo"):""%>"/>
                 </div>
                  <div class="col-md-3">
                     <label for="nom">Nom :</label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="nom">
+                    <input type="text" name="nom" value="<%=listErreurs!=null?request.getParameter("nom"):""%>"/>
                 </div>
             </div>
             <div class="row">
@@ -40,13 +64,13 @@
                     <label for="prenom">Prénom :</label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="prenom">
+                    <input type="text" name="prenom" value="<%=listErreurs!=null?request.getParameter("prenom"):""%>"/>
                 </div>
                  <div class="col-md-3">
                     <label for="Email">Email :</label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="mail">
+                    <input type="text" name="mail" value="<%=listErreurs!=null?request.getParameter("mail"):""%>"/>
                 </div>
             </div>
             <div class="row">
@@ -54,13 +78,13 @@
                     <label for="telephone">Téléphone :</label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="telephone">
+                    <input type="text" name="telephone" value="<%=listErreurs!=null?request.getParameter("telephone"):""%>"/>
                 </div>
                  <div class="col-md-3">
                     <label for="rue">Rue :</label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="rue">
+                    <input type="text" name="rue" value="<%=listErreurs!=null?request.getParameter("rue"):""%>"/>
                 </div>
             </div>
             <div class="row">
@@ -68,13 +92,13 @@
                     <label for="codePostal">Code postal :</label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="codePostal">
+                    <input type="text" name="codePostal" value="<%=listErreurs!=null?request.getParameter("codePostal"):""%>"/>
                 </div>
                  <div class="col-md-3">
                     <label for="ville">Ville :</label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="ville">
+                    <input type="text" name="ville" value="<%=listErreurs!=null?request.getParameter("ville"):""%>"/>
                 </div>
             </div>
             <div class="row">

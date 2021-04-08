@@ -1,6 +1,5 @@
 package fr.eni.projetEnchere.dal;
 
-import java.util.List;
 
 import fr.eni.projetEnchere.bo.Utilisateur;
 
@@ -22,12 +21,12 @@ public interface EnchereDAO {
 	 * Récupération de la liste des mots de passe
 	 * @return la liste des mail déjà utilisé sur le site
 	 */
-	public List<String> recuperationMail();
+	public int recuperationMail(String mail);
 	/**
 	 * Récupération de la liste des pseudos
 	 * @return la liste des pseudo déjà utiliser sur le site
 	 */
-	public List<String> recuperationPseudo();
+	public int recuperationPseudo(String pseudo);
 	
 	// Insertion
 	/**
