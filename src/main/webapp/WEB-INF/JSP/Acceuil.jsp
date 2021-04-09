@@ -12,12 +12,18 @@
 </head>
 <body>
 	<!-- NAVBAR  -->
-	<section class="contrainer">
-		<div class="contrainer-fluid">
-			<div class="row">
-				
-			</div>
-		</div>
-	</section>
+	<%
+		if(session.getAttribute("status") != null){
+			String statut = (String) session.getAttribute("status");
+			int userId = (int) session.getAttribute("id");
+	%>
+			<p> Status : <%= statut%> </p><br>
+			<p> id : <%= userId %></p>
+			
+	<%
+		}
+	%>
+	
+	</
 	<h1 style="color:green">Vous êtes connecté !</h1>
 </body>

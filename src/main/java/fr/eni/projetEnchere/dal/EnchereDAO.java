@@ -23,11 +23,12 @@ public interface EnchereDAO {
 	 */
 	public int recuperationMail(String mail);
 	/**
-	 * Récupération de la liste des pseudos
-	 * @return la liste des pseudo déjà utiliser sur le site
+	 * Récupération l'id du pseudo
+	 * @return l'id du pseudo demandé, -1 si n'existe pas.
 	 */
-	public int recuperationPseudo(String pseudo);
+	public int recuperationID(String pseudo);
 	
+
 	// Insertion
 	/**
 	 * Insertion d'un utilisateur dans la BDD

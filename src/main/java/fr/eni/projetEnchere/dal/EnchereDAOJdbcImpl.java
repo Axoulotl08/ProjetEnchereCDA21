@@ -81,7 +81,7 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 	
 
 	@Override
-	public int recuperationPseudo(String pseudo) {
+	public int recuperationID(String pseudo) {
 		String temp = null;
 		int id = 0;
 		try(Connection cnx = ConnectionProvider.getConnection()){

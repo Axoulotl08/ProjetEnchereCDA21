@@ -32,7 +32,6 @@ public class UtilisateurManager {
 			enchereDAO.insertionUtilisateur(utilisateur);
 		}
 		else {
-			System.out.println("Erreur code postale ou mdp");
 			throw erreur;
 		}
 		return utilisateur;
@@ -41,7 +40,7 @@ public class UtilisateurManager {
 	/**
 	 * 
 	 * @param pseudo
-	 * @return le pseudo lié au mots de passe si existant, sinon retourne null
+	 * @return le mdr lieu au pseudo si existant, sinon retourne null
 	 */
 	public String selectionMotDePasse (String pseudo) {
 		String mdp = null;
@@ -83,7 +82,7 @@ public class UtilisateurManager {
 	 * @param exception généère une exception si le pseudo est utilisé
 	 */
 	private void verifPseudo(String pseudo, BusinessException exception) {
-		int id = enchereDAO.recuperationPseudo(pseudo);
+		int id = enchereDAO.recuperationID(pseudo);
 		if(id != -1) {
 			exception.ajouterErreur(CodeErreurBLL.ERREUR_PSEUDO);
 		}
@@ -100,5 +99,23 @@ public class UtilisateurManager {
 			exception.ajouterErreur(CodeErreurBLL.ERREUR_EMAIL_DEJA_UTILISER);
 		}
 	}
-	
+
+	public int verificationMDP(String pseudo, String mdpEntrer) throws BusinessException{
+		BusinessException erreur = new BusinessException();
+		String mdp = selectionMotDePasse(pseudo);
+		System.out.println(mdp);
+		if(mdp != null) {
+			if(mdpEntrer.equals(mdp)) {
+				return enchereDAO.recuperationID(pseudo);
+			}
+			else {
+				erreur.ajouterErreur(CodeErreurBLL.ERREUR_MDP_INCORRECT);
+				throw erreur;
+			}
+		}
+		else {
+			erreur.ajouterErreur(CodeErreurBLL.ERREUR_IDENTIFIANT_INCORRECT);
+			throw erreur;		
+		}	
+	}
 }

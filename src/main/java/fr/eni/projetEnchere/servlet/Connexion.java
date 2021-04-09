@@ -8,14 +8,16 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import fr.eni.projetEnchere.bll.UtilisateurManager;
+import fr.eni.projetEnchere.erreur.BusinessException;
 
 /**
  * Servlet permettant la connexion d'un utilisateur
  * GET : renvoie vers la JSP
  * POST : envoie les informations vers la BLL pour vérification
- * Return : en cas de login/MDP correct, envoie un cookie pour validé la connexion sinon renvoie vers la JSP avec un message d'erreur
+ * Return : en cas de login/MDP correct, créer un parametre de session pour indiqué la connexion et l'id de l'user
  */
 @WebServlet("/Connexion")
 public class Connexion extends HttpServlet {
@@ -35,27 +37,18 @@ public class Connexion extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		UtilisateurManager userManager = new UtilisateurManager();
 		String pseudo = request.getParameter("pseudo");
-		String mdpEntrer = request.getParameter("mdp");
-		String mdp = userManager.selectionMotDePasse(pseudo);
-		System.out.println(mdp);
-		if(mdp == null) {
+		String mdpEntrer = request.getParameter("pass");
+		try {
+			int idUser = userManager.verificationMDP(pseudo, mdpEntrer);
+			HttpSession session = request.getSession();
+			session.setAttribute("status", "login");
+			session.setAttribute("id", idUser);
+		}catch (BusinessException erreur) {
+			request.setAttribute("listeCodeErreur", erreur.getListeCodesErreur());
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/JSP/connexion.jsp");
-			request.setAttribute("erreurPseudo", pseudo);
-			System.out.println("MDP null, pseudo incorrect");
 			rd.forward(request, response);
 		}
-		else {
-			if(mdpEntrer.equals(mdp)) {
-				RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/JSP/Acceuil.jsp");
-				System.out.println("pseudo et MDP OK");
-				rd.forward(request, response);
-			}
-			else {
-				RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/JSP/connexion.jsp");
-				request.setAttribute("erreurMDP", pseudo);
-				System.out.println("Erreur MDP !");
-				rd.forward(request, response);
-			}
-		}
+		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/JSP/Acceuil.jsp");
+		rd.forward(request, response);
 	}
 }

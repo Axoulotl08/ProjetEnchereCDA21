@@ -1,8 +1,8 @@
 package fr.eni.projetEnchere.bll;
 
 /**
- * Liste des codes d'erreur de traitemant pendant la BLL
- * @author Axou
+ * Liste des codes d'erreur de traitemant pendant la BLL 
+ * @author Alexandra
  *
  */
 public class CodeErreurBLL {
@@ -12,5 +12,7 @@ public class CodeErreurBLL {
 	public static final int ERREUR_EMAIL = 30300;
 	public static final int ERREUR_PSEUDO = 30400;
 	public static final int ERREUR_EMAIL_DEJA_UTILISER = 30500;
-	
+	public static final int ERREUR_FORMAT_CP = 30600;
+	public static final int ERREUR_MDP_INCORRECT = 30700;
+	public static final int ERREUR_IDENTIFIANT_INCORRECT = 30800;
 }
