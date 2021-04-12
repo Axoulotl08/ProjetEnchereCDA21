@@ -8,7 +8,7 @@ import fr.eni.projetEnchere.bo.Utilisateur;
  * @author Alexandra
  *
  */
-public interface EnchereDAO {
+public interface UtilisateurDAO {
 	
 	// Selection
 	/**
@@ -27,6 +27,12 @@ public interface EnchereDAO {
 	 * @return l'id du pseudo demandé, -1 si n'existe pas.
 	 */
 	public int recuperationID(String pseudo);
+	/**
+	 * Selection des informations de l'utilisateur à partir de son id
+	 * @param idUser id de l'utilisateur
+	 * @return les données de l'utilisateur dans un objet Utilisateur
+	 */
+	public Utilisateur selectById(int idUser);
 	
 
 	// Insertion
@@ -37,7 +43,12 @@ public interface EnchereDAO {
 	public void insertionUtilisateur (Utilisateur utilisateur);
 	
 	// Modification
-	
+	/**
+	 * Modification des informatios d'un utilisateur dans la BDD
+	 * @param idUser id de l'utilsateur
+	 * @param utilisateur information de l'utilisateur
+	 */
+	public void modificationUtilisateurByID(Utilisateur utilisateur, int idUser);
 	
 	// Suppression
 	

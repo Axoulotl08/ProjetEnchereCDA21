@@ -19,5 +19,6 @@
 	
 	</nav>
 	<h1 style="color:green">Vous êtes connecté !</h1>
+	<a href="<%=request.getContextPath()%>/ModifierProfil">Modifier profil essai</a>
 </body>
 </html>

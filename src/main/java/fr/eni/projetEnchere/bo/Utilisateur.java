@@ -14,6 +14,7 @@ public class Utilisateur {
 	private String codePostale;
 	private String ville;
 	private String motDePasse;
+	private String numTelephone;
 	private int credit;
 	private boolean admin;
 	private List<ArticleVendu> venteUtilisateur = new ArrayList<>();
@@ -197,6 +198,14 @@ public class Utilisateur {
 
 	public void setListEnchere(List<Enchere> listEnchere) {
 		this.listEnchere = listEnchere;
+	}
+
+	public String getNumTelephone() {
+		return numTelephone;
+	}
+
+	public void setNumTelephone(String numTelephone) {
+		this.numTelephone = numTelephone;
 	}
 	
 }

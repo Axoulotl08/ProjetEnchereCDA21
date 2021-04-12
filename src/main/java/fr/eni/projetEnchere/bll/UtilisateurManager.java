@@ -2,7 +2,7 @@ package fr.eni.projetEnchere.bll;
 
 import fr.eni.projetEnchere.bo.Utilisateur;
 import fr.eni.projetEnchere.dal.DAOFactory;
-import fr.eni.projetEnchere.dal.EnchereDAO;
+import fr.eni.projetEnchere.dal.UtilisateurDAO;
 import fr.eni.projetEnchere.erreur.BusinessException;
 
 
@@ -12,7 +12,7 @@ import fr.eni.projetEnchere.erreur.BusinessException;
  *
  */
 public class UtilisateurManager {
-	private EnchereDAO enchereDAO;
+	private UtilisateurDAO enchereDAO;
 	
 	public UtilisateurManager() {
 		this.enchereDAO = DAOFactory.getEnchereDAO();
@@ -103,7 +103,6 @@ public class UtilisateurManager {
 	public int verificationMDP(String pseudo, String mdpEntrer) throws BusinessException{
 		BusinessException erreur = new BusinessException();
 		String mdp = selectionMotDePasse(pseudo);
-		System.out.println(mdp);
 		if(mdp != null) {
 			if(mdpEntrer.equals(mdp)) {
 				return enchereDAO.recuperationID(pseudo);
@@ -117,5 +116,17 @@ public class UtilisateurManager {
 			erreur.ajouterErreur(CodeErreurBLL.ERREUR_IDENTIFIANT_INCORRECT);
 			throw erreur;		
 		}	
+	}
+	
+	
+	/**
+	 * Renvoie les informations de l'utilisateur à partir de son ID
+	 * @param idUser
+	 * @return
+	 */
+	public Utilisateur recuperationUtilateurParID(int idUser) throws BusinessException{
+		BusinessException erreur = new BusinessException();
+		Utilisateur user = enchereDAO.selectById(idUser);
+		return user;
 	}
 }

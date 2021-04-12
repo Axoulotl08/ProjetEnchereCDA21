@@ -8,15 +8,18 @@ import java.sql.SQLException;
 import fr.eni.projetEnchere.bo.Utilisateur;
 /**
  * Implémentation JDBC des méthodes du CRUD
- * @author Axou
+ * @author Alexandra
  *
  */
-public class EnchereDAOJdbcImpl implements EnchereDAO {
+public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	private static String INSERT_USER = "INSERT INTO UTILISATEURS (pseudo, nom, prenom, email, rue, code_postal, ville, mot_de_passe,"
 			+ " credit, administrateur) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0)";
 	private static String SELECT_MDP = "SELECT mot_de_passe FROM UTILISATEURS WHERE pseudo = ?";
 	private static String SELECT_PSEUDO = "SELECT no_utilisateur FROM UTILISATEURS WHERE pseudo = ?";
 	private static String SELECT_MAIL = "SELECT no_utilisateur FROM UTILISATEURS WHERE email = ?";
+	private static String SELECT_BY_ID = "SELECT * FROM UTILISATEURS WHERE no_utilisateur = ?";
+	private static String UPDATE_USER_BY_ID = "UPDATE UTILISATEURS pseudo = ?, nom = ?, prenom = ?, email = ?, telephone = ?, "
+					+ "rue = ?; code_postal = ?, ville = ?, mot_de_passe = ? WHERE no_utilsateur = ?";
 	
 	/**
 	 * Insertion d'un utilisateur
@@ -44,7 +47,6 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 			stmt.close();
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("Erreur d'insertion");
 		}
@@ -71,7 +73,6 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 			stmt.close();
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("Erreur Récupération MDP");
 		}
@@ -83,7 +84,6 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 	@Override
 	public int recuperationID(String pseudo) {
 		String temp = null;
-		int id = 0;
 		try(Connection cnx = ConnectionProvider.getConnection()){
 			cnx.setAutoCommit(false);
 			PreparedStatement stmt = cnx.prepareStatement(SELECT_PSEUDO);
@@ -97,9 +97,7 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 			stmt.close();
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("Erreur Récupération MDP");
 		}
 		if(temp != null)
 			return Integer.parseInt(temp);
@@ -110,7 +108,6 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 	@Override
 	public int recuperationMail(String mail) {
 		String temp = null;
-		int id = 0;
 		try(Connection cnx = ConnectionProvider.getConnection()){
 			cnx.setAutoCommit(false);
 			PreparedStatement stmt = cnx.prepareStatement(SELECT_MAIL);
@@ -124,9 +121,7 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 			stmt.close();
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("Erreur Récupération MDP");
 		}
 		if(temp != null)
 			return Integer.parseInt(temp);
@@ -134,4 +129,61 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 			return -1;
 	}
 
+	@Override
+	public Utilisateur selectById(int idUser) {
+		Utilisateur user = new Utilisateur();
+		try(Connection cnx = ConnectionProvider.getConnection()){
+			cnx.setAutoCommit(false);
+			PreparedStatement stmt = cnx.prepareStatement(SELECT_BY_ID);
+			stmt.setInt(1, idUser);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				user.setNumUtilisateur(rs.getInt("no_utilisateur"));
+				user.setNom(rs.getString("nom"));
+				user.setPseudo(rs.getString("pseudo"));
+				user.setPrenom(rs.getString("prenom"));
+				user.setEmail(rs.getString("email"));
+				user.setNumTelephone(rs.getString("telephone"));
+				user.setAdresse(rs.getString("rue"));
+				user.setCodePostale(rs.getString("code_postal"));
+				user.setCredit(rs.getInt("credit"));
+				user.setVille(rs.getString("ville"));
+			}
+			cnx.commit();
+			cnx.close();
+			stmt.close();
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return user;
+	}
+
+	@Override
+	public void modificationUtilisateurByID(Utilisateur utilisateur, int idUser) {
+		// TODO Auto-generated method stub
+		try(Connection cnx = ConnectionProvider.getConnection()){
+			cnx.setAutoCommit(false);
+			PreparedStatement stmt = cnx.prepareStatement(UPDATE_USER_BY_ID);
+			stmt.setString(idUser, INSERT_USER);
+			ResultSet rs = stmt.executeQuery();
+			stmt.setString(1, utilisateur.getPseudo());
+			stmt.setString(2, utilisateur.getNom());
+			stmt.setString(3, utilisateur.getPrenom());
+			stmt.setString(4, utilisateur.getEmail());
+			stmt.setString(5, utilisateur.getNumTelephone());
+			stmt.setString(6, utilisateur.getAdresse());
+			stmt.setString(7, utilisateur.getCodePostale());
+			stmt.setString(8, utilisateur.getVille());
+			stmt.setString(9, utilisateur.getMotDePasse());
+			stmt.setInt(10, idUser);
+			stmt.executeQuery();
+			cnx.commit();
+			cnx.close();
+			stmt.close();
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }
