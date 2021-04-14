@@ -25,8 +25,14 @@ public class UtilisateurManager {
 		Utilisateur utilisateur = new Utilisateur(pseudo, nom, prenom, email, rue, codePoste, ville, motDePasse);
 		verifCodePostal(codePoste, erreur);
 		verifMdpEtConfirmation(motDePasse, confirmationPass, erreur);
-		verifPseudo(pseudo, erreur);
-		verifMail(email, erreur);
+		int id = verifPseudo(pseudo, erreur);
+		if(id != -1) {
+			erreur.ajouterErreur(CodeErreurBLL.ERREUR_PSEUDO);
+		}
+		id = verifMail(email, erreur);
+		if(id != -1) {
+			erreur.ajouterErreur(CodeErreurBLL.ERREUR_EMAIL_DEJA_UTILISER);
+		}
 		if(!erreur.hasErreurs()) {
 			System.out.println("UserManager !!");
 			enchereDAO.insertionUtilisateur(utilisateur);
@@ -35,6 +41,53 @@ public class UtilisateurManager {
 			throw erreur;
 		}
 		return utilisateur;
+	}
+	
+
+	/**
+	 * 
+	 * @param pseudo
+	 * @param nom
+	 * @param prenom
+	 * @param email
+	 * @param rue
+	 * @param codePoste
+	 * @param ville
+	 * @param motDePasse
+	 * @param confirmationPass
+	 * @param numTelephone
+	 * @param userId
+	 * @throws BusinessException
+	 */
+	public void modificationUtilisateur(String pseudo, String nom, String prenom, String email, String rue, 
+			String codePoste, String ville, String motDePasse, String confirmationPass, String numTelephone, int userId) throws BusinessException{
+		BusinessException exception = new BusinessException();
+		verifCodePostal(codePoste, exception);
+		if(!motDePasse.trim().isEmpty() && !confirmationPass.trim().isEmpty()) {
+			verifMdpEtConfirmation(motDePasse, confirmationPass, exception);
+			System.out.println("mdp non vide !");
+			System.out.println(motDePasse);
+		}else {
+			motDePasse = enchereDAO.recuperationMotDePasse(userId);
+			System.out.println("recupération pass existant");
+			System.out.println(motDePasse);
+		}
+		int id = verifPseudo(pseudo, exception);
+		System.out.println("id = " + id + " id user : " + userId);
+		if(id != -1 && id != userId) {
+			exception.ajouterErreur(CodeErreurBLL.ERREUR_PSEUDO);
+		}
+		id = verifMail(email, exception);
+		if(id != -1 && id != userId) {
+			exception.ajouterErreur(CodeErreurBLL.ERREUR_EMAIL_DEJA_UTILISER);
+		}
+		Utilisateur utilisateur = new Utilisateur(pseudo, nom, prenom, email, rue, codePoste, ville, numTelephone, motDePasse);
+		if(!exception.hasErreurs()) {
+			enchereDAO.modificationUtilisateurByID(utilisateur, userId);
+		}
+		else {
+			throw exception;
+		}
 	}
 	
 	/**
@@ -81,11 +134,9 @@ public class UtilisateurManager {
 	 * @param pseudo que l'utilisateur veux utilisé
 	 * @param exception généère une exception si le pseudo est utilisé
 	 */
-	private void verifPseudo(String pseudo, BusinessException exception) {
+	private int verifPseudo(String pseudo, BusinessException exception) {
 		int id = enchereDAO.recuperationID(pseudo);
-		if(id != -1) {
-			exception.ajouterErreur(CodeErreurBLL.ERREUR_PSEUDO);
-		}
+		return id;
 	}
 	
 	/**
@@ -93,11 +144,9 @@ public class UtilisateurManager {
 	 * @param mail
 	 * @param exception génère une exception si le mail est utilisé
 	 */
-	private void verifMail(String mail, BusinessException exception) {
+	private int verifMail(String mail, BusinessException exception) {
 		int id = enchereDAO.recuperationMail(mail);
-		if(id != -1) {
-			exception.ajouterErreur(CodeErreurBLL.ERREUR_EMAIL_DEJA_UTILISER);
-		}
+		return id;
 	}
 
 	public int verificationMDP(String pseudo, String mdpEntrer) throws BusinessException{
@@ -125,7 +174,6 @@ public class UtilisateurManager {
 	 * @return
 	 */
 	public Utilisateur recuperationUtilateurParID(int idUser) throws BusinessException{
-		BusinessException erreur = new BusinessException();
 		Utilisateur user = enchereDAO.selectById(idUser);
 		return user;
 	}

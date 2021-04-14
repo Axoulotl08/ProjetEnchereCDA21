@@ -18,6 +18,12 @@ public interface UtilisateurDAO {
 	 */
 	public String recuperationMotDePasse(String pseudo);
 	/**
+	 * Récupération du mot de passe en fonction de l'id de l'utilisateur pour permettre sa connexion
+	 * @param pseudo de l'utilisateur entrant
+	 * @return null si pseudo introuvable, sinon retourne le motDePasse lié au pseudo
+	 */
+	public String recuperationMotDePasse(int idUser);
+	/**
 	 * Récupération de la liste des mots de passe
 	 * @return la liste des mail déjà utilisé sur le site
 	 */

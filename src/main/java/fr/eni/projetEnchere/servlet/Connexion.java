@@ -48,7 +48,9 @@ public class Connexion extends HttpServlet {
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/JSP/connexion.jsp");
 			rd.forward(request, response);
 		}
-		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/JSP/Acceuil.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("/Acceuil.jsp");
 		rd.forward(request, response);
+		
 	}
+	
 }

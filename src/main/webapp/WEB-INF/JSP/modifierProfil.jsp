@@ -20,10 +20,31 @@
             </div>
 	        <div class="row justify-content-center">
                 <div class="col-2">
-                    <h3>Inscription</h3>
+                    <h3>Modifier votre profil</h3>
                 </div>	            
             </div>
-            <form action="<%=request.getContextPath()%>/Inscription" method="post">
+            <form action="<%=request.getContextPath()%>/ModifierProfil" method="post">
+            <%
+            	Utilisateur user = (Utilisateur) request.getAttribute("user");
+            %>
+            <%
+            	List<Integer> listErreurs = (List<Integer>)request.getAttribute("listeCodeErreur");
+            	if(listErreurs != null){
+            %>
+            <div class="row justify-content-center">
+            	<div class="col-md-12">
+            		<%
+            			for(int codeErreur:listErreurs){
+            		%>
+					<h2 class="color:red"><%=LecteurMessage.getMessageErreur(codeErreur) %></h2>
+					<%
+            			}
+					%>
+            	</div>
+            </div>
+            <%
+            	}
+            %>
             <div class="row">
                 <div class="col-md-3">
                     <label for="pseudo">Pseudo :</label>

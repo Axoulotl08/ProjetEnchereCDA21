@@ -15,11 +15,12 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	private static String INSERT_USER = "INSERT INTO UTILISATEURS (pseudo, nom, prenom, email, rue, code_postal, ville, mot_de_passe,"
 			+ " credit, administrateur) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0)";
 	private static String SELECT_MDP = "SELECT mot_de_passe FROM UTILISATEURS WHERE pseudo = ?";
+	private static String SELECT_MDP_BY_ID = "SELECT mot_de_passe FROM UTILISATEURS WHERE no_utilisateur = ?";
 	private static String SELECT_PSEUDO = "SELECT no_utilisateur FROM UTILISATEURS WHERE pseudo = ?";
 	private static String SELECT_MAIL = "SELECT no_utilisateur FROM UTILISATEURS WHERE email = ?";
 	private static String SELECT_BY_ID = "SELECT * FROM UTILISATEURS WHERE no_utilisateur = ?";
-	private static String UPDATE_USER_BY_ID = "UPDATE UTILISATEURS pseudo = ?, nom = ?, prenom = ?, email = ?, telephone = ?, "
-					+ "rue = ?; code_postal = ?, ville = ?, mot_de_passe = ? WHERE no_utilsateur = ?";
+	private static String UPDATE_USER_BY_ID = "UPDATE UTILISATEURS SET pseudo = ?, nom = ?, prenom = ?, email = ?, telephone = ?, "
+					+ "rue = ?, code_postal = ?, ville = ?, mot_de_passe = ? WHERE no_utilisateur = ?";
 	
 	/**
 	 * Insertion d'un utilisateur
@@ -83,14 +84,14 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 
 	@Override
 	public int recuperationID(String pseudo) {
-		String temp = null;
+		int temp = 0;
 		try(Connection cnx = ConnectionProvider.getConnection()){
 			cnx.setAutoCommit(false);
 			PreparedStatement stmt = cnx.prepareStatement(SELECT_PSEUDO);
 			stmt.setString(1, pseudo);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
-				temp = rs.getString(1);				
+				temp = rs.getInt(1);				
 			}
 			cnx.commit();
 			cnx.close();
@@ -99,8 +100,10 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		if(temp != null)
-			return Integer.parseInt(temp);
+		if(temp > 0) {
+			System.out.println("retour id pseudo database : " + temp);
+			return temp;
+		}
 		else 
 			return -1;
 	}
@@ -123,8 +126,9 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		if(temp != null)
+		if(temp != null) {
 			return Integer.parseInt(temp);
+		}
 		else 
 			return -1;
 	}
@@ -165,8 +169,6 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 		try(Connection cnx = ConnectionProvider.getConnection()){
 			cnx.setAutoCommit(false);
 			PreparedStatement stmt = cnx.prepareStatement(UPDATE_USER_BY_ID);
-			stmt.setString(idUser, INSERT_USER);
-			ResultSet rs = stmt.executeQuery();
 			stmt.setString(1, utilisateur.getPseudo());
 			stmt.setString(2, utilisateur.getNom());
 			stmt.setString(3, utilisateur.getPrenom());
@@ -177,13 +179,34 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 			stmt.setString(8, utilisateur.getVille());
 			stmt.setString(9, utilisateur.getMotDePasse());
 			stmt.setInt(10, idUser);
-			stmt.executeQuery();
+			stmt.executeUpdate();
+			cnx.commit();
+			cnx.close();
+			stmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public String recuperationMotDePasse(int idUser) {
+		String mdp = null;
+		try(Connection cnx = ConnectionProvider.getConnection()){
+			cnx.setAutoCommit(false);
+			PreparedStatement stmt = cnx.prepareStatement(SELECT_MDP_BY_ID);
+			stmt.setInt(1, idUser);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				mdp = rs.getString(1);				
+			}
 			cnx.commit();
 			cnx.close();
 			stmt.close();
 			rs.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			System.out.println("Erreur Récupération MDP");
 		}
+		return mdp;
 	}
 }

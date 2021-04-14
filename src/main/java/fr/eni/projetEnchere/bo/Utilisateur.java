@@ -50,6 +50,33 @@ public class Utilisateur {
 		this.credit = 0;
 		this.admin = false;
 	}
+	
+	/**
+	 * Constructeur avec les champs requis pour l'inscrption
+	 * @param pseudo
+	 * @param nom
+	 * @param prenom
+	 * @param email
+	 * @param adresse
+	 * @param codePostale
+	 * @param ville
+	 * @param motDePasse
+	 */
+	public Utilisateur(String pseudo, String nom, String prenom, String email, String adresse, String codePostale,
+			String ville, String numTelephone, String motDePasse) {
+		super();
+		this.pseudo = pseudo;
+		this.nom = nom;
+		this.prenom = prenom;
+		this.email = email;
+		this.adresse = adresse;
+		this.codePostale = codePostale;
+		this.ville = ville;
+		this.motDePasse = motDePasse;
+		this.credit = 0;
+		this.admin = false;
+		this.numTelephone = numTelephone;
+	}
 
 	/**
 	 * Constructeur utilisant tout les champs

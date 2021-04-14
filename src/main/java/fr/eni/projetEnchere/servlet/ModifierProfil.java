@@ -37,7 +37,7 @@ public class ModifierProfil extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		int idUser = (int)session.getAttribute("id");
-		System.out.println("ID en sessions : " + idUser);
+		//System.out.println("ID en sessions : " + idUser);
 		UtilisateurManager userManager = new UtilisateurManager();
 		Utilisateur user = null;
 		try {
@@ -45,7 +45,6 @@ public class ModifierProfil extends HttpServlet {
 		} catch (BusinessException e) {
 			e.printStackTrace();
 		}
-		user.toString();
 		request.setAttribute("user", user);
 		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/JSP/modifierProfil.jsp");
 		rd.forward(request, response);
@@ -55,8 +54,31 @@ public class ModifierProfil extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		String pseudo = request.getParameter("pseudo");
+		String nom = request.getParameter("nom");
+		String prenom = request.getParameter("prenom");
+		String mail = request.getParameter("mail");
+		String telephone = request.getParameter("telephone");
+		String adresse = request.getParameter("rue");
+		String cp = request.getParameter("codePostal");
+		String ville = request.getParameter("ville");
+		String mdp = request.getParameter("pass");
+		String confMDP = request.getParameter("confirmation");
+		Utilisateur userRequest = (Utilisateur) request.getAttribute("user");
+		HttpSession session = request.getSession();
+		int idUser = (int)session.getAttribute("id");
+		UtilisateurManager userManager = new UtilisateurManager();
+		try {
+			userManager.modificationUtilisateur(pseudo, nom, prenom, mail, adresse, cp, ville, mdp, confMDP, telephone, idUser);
+			RequestDispatcher rd = request.getRequestDispatcher("/Acceuil.jsp");
+			
+			rd.forward(request, response);
+		}catch (BusinessException e) {
+			request.setAttribute("listeCodeErreur", e.getListeCodesErreur());
+			request.setAttribute("user", userRequest);
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/JSP/modifierProfil.jsp");
+			rd.forward(request, response);
+		}
 	}
 
 }

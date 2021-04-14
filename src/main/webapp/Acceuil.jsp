@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,15 +11,23 @@
 </head>
 <body>
 	<!-- NAVBAR  -->
-	<nav class="navbar">
-		<div class="container-fluid">
-			<a class = "navbar-brand" 
-		
-		</div>	
 	
-	
-	</nav>
+	<%
+		if(session.getAttribute("status") != null){
+			String status = (String)session.getAttribute("status");
+			if(status.equals("login")){
+	%>
 	<h1 style="color:green">Vous êtes connecté !</h1>
 	<a href="<%=request.getContextPath()%>/ModifierProfil">Modifier profil essai</a>
+	<a href="<%=request.getContextPath()%>/Deconnexion">Se déconnecter</a>
+	<%
+			}
+			else{
+	%>
+	<p> Vous n'êtes pas connecter !</p>
+	<%
+			}
+		}
+	%>
 </body>
 </html>
